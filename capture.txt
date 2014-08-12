@@ -1,0 +1,6 @@
+Script started on Sat 02 Aug 2014 10:37:45 PM PDT
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ python working_program.py 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ exit
+exit
+
+Script done on Sat 02 Aug 2014 10:37:51 PM PDT
