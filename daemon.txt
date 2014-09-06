@@ -1,0 +1,54 @@
+Script started on Sat 16 Aug 2014 01:27:36 PM PDT
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ echo 'hi'[Kiiii'
+hiiiii
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ :[KScript started on Sat 16 Aug 2014 01:57:31 PM PDT
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ 
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ g[Kps -ef [K| grep "daemon"
+root       311     1  0 Aug14 ?        00:00:00 upstart-udev-bridge --[01;31m[Kdaemon[m[K
+root       315     1  0 Aug14 ?        00:00:00 /lib/systemd/systemd-udevd --[01;31m[Kdaemon[m[K
+message+   653     1  0 Aug14 ?        00:00:12 dbus-[01;31m[Kdaemon[m[K --system --fork
+avahi      742     1  0 Aug14 ?        00:00:00 avahi-[01;31m[Kdaemon[m[K: running [siddharth-laptop.local]
+avahi      762   742  0 Aug14 ?        00:00:00 avahi-[01;31m[Kdaemon[m[K: chroot helper
+root       798     1  0 Aug14 ?        00:00:00 upstart-socket-bridge --[01;31m[Kdaemon[m[K
+root       801     1  0 Aug14 ?        00:00:00 upstart-file-bridge --[01;31m[Kdaemon[m[K
+root      1077     1  0 Aug14 ?        00:00:05 /usr/lib/accountsservice/accounts-[01;31m[Kdaemon[m[K
+rtkit     1262     1  0 Aug14 ?        00:00:00 /usr/lib/rtkit/rtkit-[01;31m[Kdaemon[m[K
+siddhar+  1594     1  0 Aug14 ?        00:00:00 /usr/bin/gnome-keyring-[01;31m[Kdaemon[m[K --[01;31m[Kdaemon[m[Kize --login
+siddhar+  1667  1596  0 Aug14 ?        00:00:17 dbus-[01;31m[Kdaemon[m[K --fork --session --address=unix:abstract=/tmp/dbus-aLjbo7m3rd
+siddhar+  1699  1596  0 Aug14 ?        00:00:03 upstart-dbus-bridge --[01;31m[Kdaemon[m[K --session --user --bus-name session
+siddhar+  1702  1596  0 Aug14 ?        00:00:00 upstart-file-bridge --[01;31m[Kdaemon[m[K --user
+siddhar+  1703  1596  0 Aug14 ?        00:00:00 upstart-dbus-bridge --[01;31m[Kdaemon[m[K --system --user --bus-name system
+siddhar+  1705  1596  0 Aug14 ?        00:01:09 /usr/bin/ibus-[01;31m[Kdaemon[m[K --[01;31m[Kdaemon[m[Kize --xim
+siddhar+  1714  1596  0 Aug14 ?        00:00:22 /usr/lib/x86_64-linux-gnu/bamf/bamf[01;31m[Kdaemon[m[K
+siddhar+  1729  1596  0 Aug14 ?        00:00:09 /usr/lib/unity-settings-[01;31m[Kdaemon[m[K/unity-settings-[01;31m[Kdaemon[m[K
+siddhar+  1752  1744  0 Aug14 ?        00:00:00 /bin/dbus-[01;31m[Kdaemon[m[K --config-file=/etc/at-spi2/accessibility.conf --nofork --print-address 3
+siddhar+  1766  1596  0 Aug14 ?        00:00:00 /usr/lib/ibus/ibus-x11 --kill-[01;31m[Kdaemon[m[K
+siddhar+  1924  1729  0 Aug14 ?        00:00:27 syn[01;31m[Kdaemon[m[K -i 1.0 -t -K -R
+siddhar+  1943  1746  0 Aug14 ?        00:00:02 /usr/lib/unity-settings-[01;31m[Kdaemon[m[K/unity-fallback-mount-helper
+siddhar+  2311  1596  0 Aug14 ?        00:00:01 /usr/bin/zeitgeist-[01;31m[Kdaemon[m[K
+siddhar+  2504  1596  0 Aug14 ?        00:00:00 /usr/lib/x86_64-linux-gnu/unity-lens-files/unity-files-[01;31m[Kdaemon[m[K
+siddhar+  2537  1596  0 Aug14 ?        00:00:01 /usr/lib/x86_64-linux-gnu/unity-lens-music/unity-music-[01;31m[Kdaemon[m[K
+root      5395     1  0 Aug14 ?        00:00:00 /usr/lib/udisks/udisks-[01;31m[Kdaemon[m[K --no-debug
+root      5400  5395  0 Aug14 ?        00:00:00 udisks-[01;31m[Kdaemon[m[K: not polling any devices  
+siddhar+ 20843  1596  0 13:26 pts/24   00:00:00 script -f -a [01;31m[Kdaemon[m[K.txt
+siddhar+ 20913  1596  0 13:27 pts/24   00:00:00 script -f -a [01;31m[Kdaemon[m[K.txt
+siddhar+ 22026 17542  0 13:57 pts/24   00:00:00 script -f -a [01;31m[Kdaemon[m[K.txt
+siddhar+ 22027 22026  0 13:57 pts/24   00:00:00 ./[01;31m[Kdaemon[m[K
+siddhar+ 22028 22026  0 13:57 pts/24   00:00:00 script -f -a [01;31m[Kdaemon[m[K.txt
+siddhar+ 22043 22029  0 13:57 pts/25   00:00:00 grep --color=auto [01;31m[Kdaemon[m[K
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ ^C
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ ^C
+]0;siddharth@siddharth-laptop: ~/code/git_modsiddharth@siddharth-laptop:~/code/git_mod$ exit
+
+Script done on Sat 16 Aug 2014 04:36:13 PM PDT
+exit
+
+Script done on Sat 16 Aug 2014 04:36:13 PM PDT
