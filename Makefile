@@ -4,45 +4,22 @@ LFLAGS = -lgit2 -lutil
 # Flags for ensuring proper formatting of C code
 CFLAGS = -ansi -pedantic -g -Wstrict-prototypes -Wall
 
-all: pipes program1 program2 pipes_modified daemon
+all: monitor create_error_commit
 
-pipes: pipes.o
-	$(CC) pipes.o -o pipes
+monitor: monitor.o
+	$(CC) monitor.o -o monitor $(LFLAGS)
 
-pipes.o: pipes.c
-	$(CC) -c pipes.c
+monitor.o: monitor.c
+	$(CC) -c monitor.c
 
-pipes_modified: pipes_modified.o
-	$(CC) pipes_modified.o -o pipes_modified
+create_error_commit: create_error_commit.o
+	$(CC) create_error_commit.o -o create_error_commit $(LFLAGS)
 
-pipes_modified.o: pipes_modified.c
-	$(CC) -c pipes_modified.c	
-
-daemon: daemon.o
-	$(CC) daemon.o -o daemon $(LFLAGS)
-
-daemon.o: daemon.c
-	$(CC) -c daemon.c	
-
-# Program1 dependencies
-program1: program1.o
-	$(CC) program1.o -o program1
-
-program1.o: program1.c
-	$(CC) $(CFLAGS) -c program1.c
-
-# Program2 dependencies
-program2: program2.o
-	$(CC) program2.o -o program2
-
-program2.o: program2.c
-	$(CC) $(CFLAGS) -c program2.c
-
-
+create_error_commit.o: create_error_commit.c
+	$(CC) -c create_error_commit.c 
 
 check: 
 	c_style_check pipes.c
 
 clean:
-	rm *.o
-	rm pipes program1 program2
+	rm *.o monitor create_error_commit typescript

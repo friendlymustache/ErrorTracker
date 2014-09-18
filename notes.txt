@@ -1,0 +1,27 @@
+Ok so in the child process
+	- closes off descriptor for master side
+	- calls login_tty for the slave pty
+		- 
+
+
+alright sweet
+
+so we can write to some separate executable process
+what can we do with this?
+
+in this new executable process, we could:
+	- repeatedly read what's sent to the process (read from STDIN)
+	- fork off a python process and pass in the STDIN string to the process (easier to write)
+	- do the processing in this process itself
+
+then we'd have to rewrite our git-committing code in python
+	- probably better to do this in C cause this might be called a lot
+
+
+goals:
+	- figure out how to programatically commit contents of current directory to _error branch
+	- add in parsing so we only do the commit when the terminal output involves some error or exception
+	- figure out how to store your changes in a manner that allows for machine-learning to be done
+
+
+
