@@ -10,7 +10,6 @@
 #include <time.h>
 const char* ERROR_BRANCH_NAME = "_error";
 const char* MASTER_BRANCH_NAME = "master";
-const char* COMMIT_MESSAGE = "Attempting to add files to commit";
 
 
 
@@ -30,29 +29,6 @@ static void fail(const char *msg, const char *arg)
 	else
 		fprintf(stderr, "%s\n", msg);
 	exit(1);
-}
-
-static char* build_commit_message(const char *message, int strip_comments, char comment_char) {
-	// Get a pointer to a git buffer
-	git_buf *output = (git_buf * ) malloc(sizeof(git_buf));
-	output->ptr = NULL;
-	output->size = 0;
-	output->asize = 0;
-
-	const git_error *e;
-
-	int prettify_result = git_message_prettify(output, message, 0, 'a');
-	switch(prettify_result) {
-		case 0:
-			break;
-		default:
-			e = giterr_last();
-			printf("Method 'build_commit_message' failed with error code %d and message %s\n", prettify_result, e->message);
-	}
-
-	char *prettified_message = output->ptr;
-	free(output);
-	return prettified_message;
 }
 
 static void usage(const char *error, const char *arg)
@@ -110,54 +86,38 @@ git_signature* get_signature(git_repository *repo) {
 }
 
 
-git_tree* get_working_dir(git_repository *repo) {
+git_index* get_working_dir(git_repository *repo) {
 	/* 
-	 * Returns a git_tree object containing the contents of the working directory 
+	 * Returns a git_index object containing the contents of the working directory 
 	 * (of the current branch) of the provided repo
 	 */	
 	git_index* index_obj;
-	git_tree *tree_obj = NULL;
-	git_oid *tree_oid = (git_oid *) malloc(sizeof(git_oid));
-	const git_error *e;
-	// Load current repo's index into the index_obj variable
+	git_tree *tree_obj;
+	git_oid *tree_oid;
 
-	int error = git_repository_index(&index_obj, repo);
-	switch(error) {
-		case 0:
-			printf("Successfully loaded/created index object\n");
-			break;
-		default:
-			e = giterr_last();
-			printf("Error %d/%d: %s\n", error, e->klass, e->message);		
-	}	
+	// Load current repo's index into the index_obj variable
+	git_repository_index(&index_obj, repo);
+	// Initialize index object
 
 	// See http://git.kaarsemaker.net/libgit2/blob/5173ea921d4ccbbe7d61ddce9a0920c2e1c82035/tests-clar/index/addall.c
-	// Add files to index
-	
 	git_strarray paths = {NULL, 0};
+
 	char* strs[1];
 	strs[0] = "*";
 	paths.strings = strs;
 	paths.count   = 1;
 
 	int add_result = git_index_add_all(index_obj, &paths, 0, NULL, NULL);
-	// int add_result = git_index_read(index_obj, 1);
-
 	switch(add_result) {
 		case 0:
 			printf("Successfully added working directory files to index object\n");
 			break;
 		default:
-			e = giterr_last();
-			printf("Error %d/%d: %s\n", error, e->klass, e->message);
-		}
-	
+			printf("Failed to add working directory files to index object, error code: %d\n", add_result);
+	}
 
-	// Write index to tree
+	int tree_conversion = git_index_write_tree(tree_oid, index_obj);	
 
-	
-	int tree_conversion = git_index_write_tree(tree_oid, index_obj);
-	printf("Done attemping to write to tree\n");
 	switch(tree_conversion) {
 		case 0:
 			printf("Successfully wrote tree \n");
@@ -166,24 +126,18 @@ git_tree* get_working_dir(git_repository *repo) {
 			printf("Failed to write tree from index, error code: %d\n", tree_conversion);
 	}
 
-	// Free index
-	git_index_free(index_obj);
 
 
 	// Look up the tree object using tree_oid 
 	printf("About to lookup tree\n");
 	int tree_lookup = git_tree_lookup(&tree_obj, repo, tree_oid);
 
-	switch(tree_lookup) {
-		case 0:
-			printf("Successfully looked-up tree\n");
-			break;
-		default:
-			e = giterr_last();
-			printf("Error %d/%d: %s\n", tree_lookup, e->klass, e->message);		
-	}
+	printf("DEBUG: tree lookup result: %d\n", tree_lookup);
+	if(tree_lookup != 0) {
+		fail("Failed at tree lookup\n", NULL);
+	}	
 
-	return tree_obj;
+	return index_obj;
 }
 
 
@@ -264,37 +218,53 @@ git_reference* create_branch(git_repository *repo, const char* name, const char*
  */
 
 
-int _create_commit(git_repository *repo, git_tree *tree_obj, const char *message, char *branch_name, const git_commit *parents[], size_t parent_count) {
+int _create_commit(git_repository *repo, git_index *index_obj, char *message, char *branch_name, git_commit *parents[], size_t parent_count) {
 
 
 	/* Helper function for creating a commit on the repository represented by <repo> */
 	printf("DEBUG: In _create_commit\n");
+
+	git_oid *tree_oid, *commit_oid;
+	git_tree *tree_obj;
+	printf("DEBUG: About to writre index to tree\n");
+	// Write index to tree, save resulting OID in tree_oid
+	int tree_conversion = git_index_write_tree(tree_oid, index_obj);	
+
+	printf("DEBUG: tree conversion result: %d\n", tree_conversion);
+	git_index_free(index_obj);
+	printf("DEBUG: Freed index object\n");
+
+
+	
+
+	// Look up the tree object using tree_oid
+	int tree_lookup = git_tree_lookup(&tree_obj, repo, tree_oid);
+
+	printf("DEBUG: tree lookup result: %d\n", tree_lookup);
+	if(tree_lookup != 0) {
+		fail("Failed at tree lookup\n", NULL);
+	}
 
 	// Get commit signature
 	git_signature *signature = get_signature(repo);
 	// Set author and committer signatures to the commit signature
 	git_signature *author = signature;
 	git_signature *committer = signature;
-	git_oid *commit_oid;
-	const git_error *e;
 
 	// ------------------------------------------- TEMP debug stuff so that parent count is set to 0 -----------------------------------       //
-	// parent_count = 0;
-	// parents = NULL;
+	parent_count = 0;
+	parents = NULL;
 
 	printf("DEBUG: _create_commit: Ready to call git_commit_create with %zu parents \n", parent_count);
-	
-	int commit_result = git_commit_create(commit_oid, repo, branch_name, author, committer,
-		NULL, message, tree_obj, parent_count, parents);
+	int commit_result = git_commit_create_v(commit_oid, repo,
+	branch_name, author, committer,
+	NULL, message, tree_obj, parent_count);
 
-
-	switch(commit_result) {
-		case 0:
-			printf("DEBUG - _create_commit: Successfully created commit\n");
-			break;
-		default:
-			e = giterr_last();
-			printf("_create_commit failed with error %d/%d: %s\n", commit_result, e->klass, e->message);		
+	if(commit_result != 0) {
+		printf("_create_commit failed with error code %d\n", commit_result);
+	}
+	else {
+		printf("_create_commit succeeded\n");
 	}
 
 	return commit_result;
@@ -302,14 +272,14 @@ int _create_commit(git_repository *repo, git_tree *tree_obj, const char *message
 }
 
 
-int create_commit(git_repository *repo, char *branch_name, const git_commit *parents[], git_tree *tree_obj, const char *message) {
+int create_commit(git_repository *repo, char *branch_name, git_commit *parents[], git_index *index_obj, char *message) {
 
 	/* Creates a commit on the given repo using the provided index object and
 	 * the provided message
 	 */
 
 	size_t parent_count = sizeof(parents) / sizeof(git_commit*);
-	int result = _create_commit(repo, tree_obj, message, branch_name, parents, parent_count);
+	int result = _create_commit(repo, index_obj, message, branch_name, parents, parent_count);
 	if(result != 0) {
 		fail("create_commit failed", NULL);
 	}	
@@ -378,23 +348,22 @@ git_repository* current_repo() {
 
 
 
-int create_error_branch_commit(git_repository *repo, const char *message) {
+int create_error_branch_commit(git_repository *repo, char *message) {
 	/* Creates a commit on the _error branch of the given repository using the current
 	 * working directory of the master branch
 	 */	
 
+	/*
+	git_index *working_dir = get_working_dir(repo);
 
-	printf("DEBUG - create_error_branch_commit: Getting working tree from repo\n");
-	git_tree *working_tree;
-	working_tree = get_working_dir(repo);
-	printf("DEBUG - create_error_branch_commit: Got working tree from repo\n");
+	// Todo: Get the <parents> array for the error branch - should just be HEAD of error branch
 
 	// Get a reference to the head commit of the error branch and look up its oid
 	// Branches are just named references to commits, so looking up the error_branch
 	// reference should give us a reference to its head
-	const git_reference* error_branch_reference = get_error_branch(repo);
-	const git_oid* error_branch_oid = git_reference_target(error_branch_reference);
-	printf("DEBUG - create_error_branch_commit: Got error branch\n");
+	git_reference *error_branch_reference = get_error_branch(repo);
+	git_oid* error_branch_oid = git_reference_target(error_branch_reference);
+	printf("Got error branch\n");
 
 	// Initialize a commit object to store the error branch's head commit (the parent of the
 	// commit we're about to create)
@@ -406,30 +375,27 @@ int create_error_branch_commit(git_repository *repo, const char *message) {
 		fail("create_error_branch_commit failed at commit_lookup_result", NULL);
 	}	
 	else {
-		printf("DEBUG - create_error_branch_commit: Looked up error branch head commit\n");
+		printf("Looked up error branch head commit\n");
 	}
 
 	// Initialize the array of parent commits for the commit we're creating
-	const git_commit* parents[1] = { (const git_commit*) parent_commit };
+	git_commit* parents[1] = { parent_commit };
 
 	// Create our commit
-	int error_branch_commit_create_result;
-	char* ref = "refs/heads/_error";
-	char *prettified_message = build_commit_message(message, 0, 'a');
-
-	error_branch_commit_create_result = create_commit(repo, ref, parents, working_tree, message);
-	if(error_branch_commit_create_result != 0) {
+	int result = create_commit(repo, ERROR_BRANCH_NAME, parents, working_dir, message);
+	if(result != 0) {
 		fail("create_error_branch_commit failed at create_commit", NULL);
 	}	
 	else {
-		printf("DEBUG - create_error_branch_commit: succeeded with result %d\n", error_branch_commit_create_result);
+		printf("create_error_branch_commit succeeded\n");
 	}
-
-	git_commit_free(parent_commit);
-	git_tree_free(working_tree);
-	printf("Done freeing stuff\n");
-	return error_branch_commit_create_result;
+	*/
+	int result = 0;
+	return result;
 }
+
+
+
 
 
 
@@ -458,28 +424,30 @@ int main(int argc, char *argv[])
 	git_repository *current;
 	git_reference *master;
 	git_reference *error;
-	git_tree *working_dir;
-	const git_error *e;
+	git_index *working_dir;
 
 	current = current_repo();
 	master = master_branch(current);
 	error = get_error_branch(current);
+	working_dir = get_working_dir(current);
 	
-	printf("DEBUG: main: Going to create error branch commit\n");
-
-	int result = create_error_branch_commit(current, COMMIT_MESSAGE);
-	printf("Done with creating error branch commit\n");
-	switch(result) {
-		case 0:
-			printf("Successfully created commit on error branch\n");
-			break;
-		default:
-			e = giterr_last();
-			printf("Error %d/%d: %s\n", result, e->klass, e->message);		
-	}
+	// create_error_branch_commit(current, "My first error branch commit yo");
 	return 0;	
-	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -488,6 +456,9 @@ int main(int argc, char *argv[])
  * Other stuff included by default 
  *
  */
+
+
+
 
 
 /* Unlike regular "git init", this example shows how to create an initial
