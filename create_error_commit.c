@@ -182,7 +182,8 @@ git_tree* get_working_dir(git_repository *repo) {
 			e = giterr_last();
 			printf("Error %d/%d: %s\n", tree_lookup, e->klass, e->message);		
 	}
-
+	// Free tree oid
+	free(tree_oid);
 	return tree_obj;
 }
 
