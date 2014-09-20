@@ -12,12 +12,6 @@ monitor: monitor.o
 monitor.o: monitor.c
 	$(CC) -c monitor.c
 
-create_error_commit_old: create_error_commit_old.o
-	$(CC) create_error_commit_old.o -o create_error_commit_old $(LFLAGS)
-
-create_error_commit_old.o: create_error_commit_old.c
-	$(CC) -c create_error_commit_old.c 
-
 create_error_commit: create_error_commit.o
 	$(CC) create_error_commit.o -o create_error_commit $(LFLAGS)
 
