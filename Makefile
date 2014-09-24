@@ -22,4 +22,4 @@ check:
 	c_style_check pipes.c
 
 clean:
-	rm *.o monitor create_error_commit create_error_commit_old typescript
+	rm *.o monitor create_error_commit typescript

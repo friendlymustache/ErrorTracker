@@ -19,9 +19,62 @@ then we'd have to rewrite our git-committing code in python
 
 
 goals:
+
+COMPLETE:
 	- figure out how to programatically commit contents of current directory to _error branch
 	- add in parsing so we only do the commit when the terminal output involves some error or exception
 	- figure out how to store your changes in a manner that allows for machine-learning to be done
 
 
+
+
+
+ok so what needs to happen...?!
+
+when an error occurs, keep a record of the type of error that occurred
+	- group errors together so that we can tell which command-line output/errors occurred for which programs
+	- single git repository for errors in some directory dedicated to this addon/tool
+	- branchnames for each program: '<program_name>__error'
+
+
+when you run *any* program:
+	0) determine if any file changes have occurred under the current git repo. if not, don't check anything
+	1) parse the output, determine if an error occurred; if not, you're good!
+		a) if an error occurred, create an error branch if necessary to save current file state
+	
+
+when you run the same program again (similar command-line input - but what about args?)
+	1) parse the error message/output
+	2) determine if any active errors were resolved
+		a) if so, save file diffs from original error as a commit
+	3) determine if there are new errors
+		a) if so, keep note of the new errorf
+	
+in some local database (or internet if you encrypt it?):
+	- keep track of errors and their corresponding file-diffs
+	- when you run into an error, look up the error-pattern as the key in the database to find corresponding file-diffs that resolved said error
+
+
+TODO:
+	_error_master, _error_branch1, _error_branch2...etc for each branch in a repo?
+	how to keep track of multiple errors under one branch? 
+		BAD IDEA a) store error pattern in commit message (what format/how? also, slow)
+		BAD IDEA b) even more nested branches (_error_master_segfault, etc)
+		c) new subdirectory (.tracker) with metadata for the repo (basically a hash table of errors)
+			i) the nice thing about this is that the .tracker repo can be tracked by git and so will change with each branch
+			ii) actually, we probably don't want to do that cause then it'll show up in 'git status' output etc
+			iii) so instead we'll just have a hash table mapping each branch to a list of unresolved errors
+			
+
+
+	ok so when there is terminal output, parse it and determine if it represents the resolution to an unresolved error in .tracker
+	from .tracker, get the commit blob
+	diff the working tree with the error-origin commit and save the diffs somewhere
+
+	
+
+
+	
+	
+	
 
