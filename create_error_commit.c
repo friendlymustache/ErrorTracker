@@ -428,50 +428,7 @@ int create_error_branch_commit(git_repository *repo, const char *message) {
 	return error_branch_commit_create_result;
 }
 
-/*
- ****
- ****
- ****
- ****
- ****
- ****
- ****
- ****   
- MAIN FUNCTION
- ****
- ****
- ****
- ****
- ****
- ****
- ****
- ****
- */   
-
-int main(int argc, char *argv[])
-{
-	git_repository *current;
-	git_reference *master;
-	git_reference *error;
-	git_tree *working_dir;
-	const git_error *e;
-
-	current = current_repo();
-	master = master_branch(current);
-	error = get_error_branch(current);
-	
-	printf("DEBUG: main: Going to create error branch commit\n");
-
-	int result = create_error_branch_commit(current, COMMIT_MESSAGE);
-	printf("Done with creating error branch commit\n");
-	switch(result) {
-		case 0:
-			printf("Successfully created commit on error branch\n");
-			break;
-		default:
-			e = giterr_last();
-			printf("Error %d/%d: %s\n", result, e->klass, e->message);		
-	}
-	return 0;	
-	
+int create_error(const char *message) {
+	git_repository *repo = current_repo();
+	create_error_branch_commit(repo, message);
 }

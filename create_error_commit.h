@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-const char* ERROR_BRANCH_NAME = "_error";
-const char* MASTER_BRANCH_NAME = "master";
-const char* COMMIT_MESSAGE = "Attempting to add files to commit";
+static const char* ERROR_BRANCH_NAME = "_error";
+static const char* MASTER_BRANCH_NAME = "master";
+static const char* COMMIT_MESSAGE = "Attempting to add files to commit";
 
 
 
@@ -72,3 +72,4 @@ git_reference* get_error_branch(git_repository *repo);
 git_reference* master_branch(git_repository *repo);
 git_repository* current_repo();
 int create_error_branch_commit(git_repository *repo, const char *message);
+int create_error(const char *message);

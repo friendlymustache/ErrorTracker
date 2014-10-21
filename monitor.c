@@ -52,8 +52,10 @@ void monitor_pty(fd_set *read_set, int pty_master_fd, int analyzer_fd, char* buf
               perror("partial/failed write (pty_master_fd)");
 
           /* Write from the buffer to the analyzer fd */
+          /*
           if (write(analyzer_fd, buf, num_read) != num_read)
               perror("partial/failed write (analyzer_fd)");
+          */
 
       }
 
@@ -75,15 +77,17 @@ void monitor_pty(fd_set *read_set, int pty_master_fd, int analyzer_fd, char* buf
       }
 
       /* Process output from the analyzer fd; currently, we write it to the terminal
-       * STDOUT.
+       * STDOUT. This is basically whatever's written to the PTY in which the analyzer
+       * runs.
        */
+
+       /*
       if (read_analyzer && FD_ISSET(analyzer_fd, read_set)) {      
           num_read = read(analyzer_fd, buf, BUF_SIZE); 
           if (write(STDOUT, buf, num_read) != num_read)
               perror("partial/failed write (STDOUT)");
-          if (write(analyzer_fd, buf, num_read) != num_read)
-              perror("partial/failed write (analyzer_fd)");
-      }        
+      } 
+      */      
 
 }
 
@@ -196,7 +200,7 @@ int main(int argc, char* argv[]) {
     if (shell == NULL || *shell == '\0')
         shell = "/bin/sh";
 
-    execlp("echo", "echo", "Sup from the second fork", (char *) NULL);
+    execlp("analyzer", "analyzer", (char *) NULL);
     return 0;
   }
 
